@@ -14,7 +14,9 @@ const getIPsList = async (id: number): Promise<void> => {
     });
 
     if (lightRecords.length) {
-      const ips = lightRecords.map((record) => record.ipToPing).join('\n');
+      const ips = lightRecords.map((record) =>
+        `${record.ipToPing} - ${record.status ? 'увімкнено' : 'вимкнено'}`
+      ).join('\n');
       bot.sendMessage(id, 'Ви відслідковуєте наступні адреси:\n' + ips);
     } else {
       bot.sendMessage(id, 'Ви не відслідковуєте жодної адреси');
