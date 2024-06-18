@@ -1,33 +1,25 @@
-import mongoose from 'mongoose';
 import bot from '../bot';
-import { formatTime, dbMongooseUri } from '../utils';
+import { formatTime } from '../utils';
 import { LightRecords } from '../schemas';
+import { ILightRecord } from '../interfaces';
 
-const onLightStatusChange = async (
-  ids: string[],
-  timeStamp: string,
-  isLightOn: boolean,
-  ip: string
-): Promise<void> => {
-  const date = new Date(timeStamp);
+const onLightStatusChange = async (record: ILightRecord): Promise<void> => {
+  const { lastTimestamp, status, userIds, ipToPing } = record;
+
+  const date = new Date(lastTimestamp);
   const now = new Date();
   const delta = now.getTime() - date.getTime();
 
   const timeFormatted = formatTime(delta);
 
-  const message = isLightOn
+  const message = status
     ? 'Світло увімкнене.\n' + 'Світла не було ' + timeFormatted
     : 'Світло вимкнене.\n' + 'Світло було ' + timeFormatted;
 
-  ids.forEach((id) => bot.sendMessage(id, message));
+  userIds.forEach((id: number) => bot.sendMessage(id, message));
 
   try {
-    mongoose.connect(dbMongooseUri);
-
-    await LightRecords.updateOne(
-      { ipToPing: ip },
-      { status: isLightOn, lastTimestamp: timeStamp }
-    );
+    await LightRecords.updateOne({ ipToPing }, { status, lastTimestamp });
   } catch {
     console.error('Failed to update light status');
   }

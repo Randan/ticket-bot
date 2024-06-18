@@ -1,4 +1,6 @@
 import formatTime from './formatTime';
+import checkIPFormat from './checkIPFormat';
+import updateLightRecords from './lightRecordsStore';
 import {
   adminId,
   appPort,
@@ -12,4 +14,6 @@ export {
   formatTime,
   dbLightCollection,
   dbMongooseUri,
+  checkIPFormat,
+  updateLightRecords,
 };

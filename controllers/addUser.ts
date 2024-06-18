@@ -1,16 +1,24 @@
-import mongoose from 'mongoose';
 import bot from '../bot';
-import { dbMongooseUri } from '../utils';
+import { checkIPFormat, updateLightRecords } from '../utils';
 import { LightRecords } from '../schemas';
 import { ILightRecord } from '../interfaces';
 
-const addUser = async (id: number, ip: string): Promise<void> => {
+const addUser = async (id: number, ip?: string): Promise<void> => {
   try {
     if (!id) {
       console.error('User id is required');
+      return;
     }
 
-    mongoose.connect(dbMongooseUri);
+    if (!ip) {
+      bot.sendMessage(id, 'Введіть адресу для відслідковування');
+      return;
+    }
+
+    if (!checkIPFormat(ip)) {
+      bot.sendMessage(id, 'Введіть коректну IP адресу');
+      return;
+    }
 
     const existingLightRecord: ILightRecord | null = await LightRecords.findOne(
       {
@@ -18,25 +26,25 @@ const addUser = async (id: number, ip: string): Promise<void> => {
       }
     );
 
-    if (
-      existingLightRecord &&
-      existingLightRecord.userIds.includes(id)
-    ) {
+    if (existingLightRecord && existingLightRecord.userIds.includes(id)) {
       bot.sendMessage(id, 'Ви вже відслідковуєте цю адресу.');
     } else if (existingLightRecord) {
       const updatedIds = new Array(
         new Set([...existingLightRecord.userIds, id])
       );
 
-      await LightRecords.findOneAndUpdate({
-        ipToPing: ip,
-      }, {
-        status: true,
-        lastTimestamp: new Date().toISOString(),
-        userIds: updatedIds,
-        ipToPing: ip,
-      });
+      await LightRecords.findOneAndUpdate(
+        {
+          ipToPing: ip,
+        },
+        {
+          status: true,
+          lastTimestamp: new Date().toISOString(),
+          $push: { userIds: id },
+        }
+      );
 
+      updateLightRecords();
       bot.sendMessage(id, 'Тепер ви відслідковуєте адресу ' + ip);
     } else {
       await LightRecords.create({
@@ -46,10 +54,11 @@ const addUser = async (id: number, ip: string): Promise<void> => {
         ipToPing: ip,
       });
 
+      updateLightRecords();
       bot.sendMessage(id, 'Тепер ви відслідковуєте адресу ' + ip);
     }
-  } catch {
-    console.error('Failed to add user');
+  } catch (err) {
+    console.error('Failed to add user', err);
   }
 };
 
