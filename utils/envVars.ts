@@ -1,8 +1,12 @@
 import 'dotenv/config';
 
 const appPort: string = process.env.PORT || '';
+const dbUrl: string = process.env.DB_URL || '';
 const adminId: string = process.env.ADMIN_TG_ID || '';
-const enPercent: string = process.env.EN_PERCENT || '';
-const esv: string = process.env.ESV || '';
+const dbLightCollection: string = process.env.DB_LIGHT_COLLECTION || '';
 
-export { adminId, appPort, enPercent, esv };
+const dbMongooseUri: string = dbUrl
+  ? dbUrl + '?retryWrites=true&w=majority'
+  : '';
+
+export { adminId, appPort, dbLightCollection, dbMongooseUri };

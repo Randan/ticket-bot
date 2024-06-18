@@ -1,12 +1,23 @@
 import { Message } from 'node-telegram-bot-api';
 import bot from '../bot';
-import { getTaxesCalculations, help } from '../controllers';
+import { help, addUser, removeUser } from '../controllers';
 
 const events: Record<string, RegExp> = {
   help: /\/help/,
-  tax: /\/tax/,
+  start: /\/start/,
+  stop: /\/stop/,
 };
 
 bot.onText(events.help, (msg: Message): void => help(msg));
 
-bot.onText(events.tax, (msg: Message): void => getTaxesCalculations(msg));
+bot.onText(
+  events.start,
+  async (msg: Message): Promise<void> =>
+    addUser(msg.from?.id || 0, msg.text?.split(' ')[1] || '')
+);
+
+bot.onText(
+  events.stop,
+  async (msg: Message): Promise<void> =>
+    removeUser(msg.from?.id || 0, msg.text?.split(' ')[1])
+);

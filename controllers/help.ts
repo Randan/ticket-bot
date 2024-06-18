@@ -1,6 +1,5 @@
 import { Message } from 'node-telegram-bot-api';
 import bot from '../bot';
-import { lib } from '../utils';
 
 const help = (msg: Message): void => {
   if (!msg.from) return;
@@ -8,7 +7,7 @@ const help = (msg: Message): void => {
 
   bot.sendMessage(
     id,
-    lib.help(msg)
+    ''
   );
 };
 
