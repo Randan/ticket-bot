@@ -9,4 +9,4 @@ const cronOptions = {
 
 cron.schedule('0 0 * * *', () => removeIPsWOUsers(), cronOptions);
 
-cron.schedule('* * * * * *', () => pingIP(), cronOptions);
+cron.schedule('* * * * *', () => pingIP(), cronOptions);
