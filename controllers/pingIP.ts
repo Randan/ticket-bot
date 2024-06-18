@@ -1,19 +1,21 @@
-import { ILightRecord } from '../interfaces';
 import ping from 'ping';
 import { getValue } from 'node-global-storage';
+import { ILightRecord } from '../interfaces';
 import onLightStatusChange from './onLightStatusChange';
+import { localDbName } from '../utils';
 
+const pingIP = (): void => {
+  const lightRecords: ILightRecord[] = getValue(localDbName);
 
-const pingIP = () => {
-  const lightRecords: ILightRecord[] = getValue('light');
-
-  lightRecords.forEach((record: ILightRecord) => {
+  Object.values(lightRecords).forEach((record: ILightRecord) => {
     ping.sys.probe(record.ipToPing, (isAlive) => {
       if (record.status === isAlive) {
         return;
       }
 
-      onLightStatusChange({ ...record, status: Boolean(isAlive) });
+      record.status = Boolean(isAlive);
+
+      onLightStatusChange(record);
     });
   });
 };

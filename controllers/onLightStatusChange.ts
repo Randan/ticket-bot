@@ -13,8 +13,8 @@ const onLightStatusChange = async (record: ILightRecord): Promise<void> => {
   const timeFormatted = formatTime(delta);
 
   const message = status
-    ? 'Світло увімкнене.\n' + 'Світла не було ' + timeFormatted
-    : 'Світло вимкнене.\n' + 'Світло було ' + timeFormatted;
+    ? 'Світло увімкнене.\n' + ipToPing + '\nСвітла не було ' + timeFormatted
+    : 'Світло вимкнене.\n' + ipToPing + '\nСвітло було ' + timeFormatted;
 
   userIds.forEach((id: number) => bot.sendMessage(id, message));
 

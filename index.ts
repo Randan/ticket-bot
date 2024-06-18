@@ -1,7 +1,10 @@
 /* eslint-disable import/first */
 import express, { Express, Request, Response } from 'express';
 import mongoose from 'mongoose';
-import { appPort, dbMongooseUri, updateLightRecords } from './utils';
+import { setValue } from 'node-global-storage';
+import { appPort, dbMongooseUri, localDbName } from './utils';
+import { ILightRecord } from './interfaces';
+import { LightRecords } from './schemas';
 
 const app: Express = express();
 
@@ -13,10 +16,20 @@ app.get('/', (req: Request, res: Response): void => {
 
 import './events';
 
-app.listen(appPort, () => {
+app.listen(appPort, async () => {
   console.log(`⚡⚡⚡ Light Bot is Alive on PORT: ${appPort}`);
-  updateLightRecords();
+
+  try {
+    setValue(localDbName, []);
+
+    const response: ILightRecord[] = await LightRecords.find({
+      userIds: { $not: { $size: 0 } },
+    });
+
+    setValue(localDbName, response);
+  } catch (err) {
+    console.error('Failed to update light records', err);
+  }
 });
 
 import './cron';
-

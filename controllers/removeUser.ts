@@ -1,6 +1,22 @@
+import { setValue } from 'node-global-storage';
 import bot from '../bot';
-import { checkIPFormat, updateLightRecords } from '../utils';
+import { checkIPFormat, localDbName } from '../utils';
 import { LightRecords } from '../schemas';
+import { ILightRecord } from '../interfaces';
+
+const updateLightRecords = async (): Promise<void> => {
+  try {
+    setValue(localDbName, []);
+
+    const response: ILightRecord[] = await LightRecords.find({
+      userIds: { $not: { $size: 0 } },
+    });
+
+    setValue(localDbName, response);
+  } catch (err) {
+    console.error('Failed to update light records', err);
+  }
+};
 
 const removeUser = async (id: number, ip?: string): Promise<void> => {
   if (!id) {

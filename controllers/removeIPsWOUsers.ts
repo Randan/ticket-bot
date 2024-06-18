@@ -1,5 +1,21 @@
+import { setValue } from 'node-global-storage';
+import { ILightRecord } from '../interfaces';
 import { LightRecords } from '../schemas';
-import { updateLightRecords } from '../utils';
+import { localDbName } from '../utils';
+
+const updateLightRecords = async (): Promise<void> => {
+  try {
+    setValue(localDbName, []);
+
+    const response: ILightRecord[] = await LightRecords.find({
+      userIds: { $not: { $size: 0 } },
+    });
+
+    setValue(localDbName, response);
+  } catch (err) {
+    console.error('Failed to update light records', err);
+  }
+};
 
 const removeIPsWOUsers = async (): Promise<void> => {
   try {

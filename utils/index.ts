@@ -1,11 +1,12 @@
 import formatTime from './formatTime';
 import checkIPFormat from './checkIPFormat';
-import updateLightRecords from './lightRecordsStore';
 import {
   adminId,
   appPort,
   dbLightCollection,
   dbMongooseUri,
+  localDbName,
+  passphrase,
 } from './envVars';
 
 export {
@@ -14,6 +15,7 @@ export {
   formatTime,
   dbLightCollection,
   dbMongooseUri,
+  localDbName,
   checkIPFormat,
-  updateLightRecords,
+  passphrase,
 };

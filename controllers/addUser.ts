@@ -1,7 +1,22 @@
+import { setValue } from 'node-global-storage';
 import bot from '../bot';
-import { checkIPFormat, updateLightRecords } from '../utils';
+import { checkIPFormat, localDbName, passphrase } from '../utils';
 import { LightRecords } from '../schemas';
 import { ILightRecord } from '../interfaces';
+
+const updateLightRecords = async (): Promise<void> => {
+  try {
+    setValue(localDbName, []);
+
+    const response: ILightRecord[] = await LightRecords.find({
+      userIds: { $not: { $size: 0 } },
+    });
+
+    setValue(localDbName, response);
+  } catch (err) {
+    console.error('Failed to update light records', err);
+  }
+};
 
 const addUser = async (id: number, ip?: string): Promise<void> => {
   try {
@@ -15,47 +30,48 @@ const addUser = async (id: number, ip?: string): Promise<void> => {
       return;
     }
 
-    if (!checkIPFormat(ip)) {
-      bot.sendMessage(id, 'Введіть коректну IP адресу');
-      return;
-    }
+    const [ipAdress, password] = ip.split('-');
 
-    const existingLightRecord: ILightRecord | null = await LightRecords.findOne(
-      {
-        ipToPing: ip,
+    if ((ipAdress.startsWith('192.168') && password === passphrase) || !ipAdress.startsWith('192.168')) {
+      if (!checkIPFormat(ipAdress)) {
+        bot.sendMessage(id, 'Введіть коректну IP адресу');
+        return;
       }
-    );
 
-    if (existingLightRecord && existingLightRecord.userIds.includes(id)) {
-      bot.sendMessage(id, 'Ви вже відслідковуєте цю адресу.');
-    } else if (existingLightRecord) {
-      const updatedIds = new Array(
-        new Set([...existingLightRecord.userIds, id])
-      );
+      const existingLightRecord: ILightRecord | null =
+        await LightRecords.findOne({
+          ipToPing: ipAdress,
+        });
 
-      await LightRecords.findOneAndUpdate(
-        {
-          ipToPing: ip,
-        },
-        {
+      if (existingLightRecord && existingLightRecord.userIds.includes(id)) {
+        bot.sendMessage(id, 'Ви вже відслідковуєте цю адресу.');
+      } else if (existingLightRecord) {
+        await LightRecords.findOneAndUpdate(
+          {
+            ipToPing: ipAdress,
+          },
+          {
+            status: true,
+            lastTimestamp: new Date().toISOString(),
+            $push: { userIds: id },
+          }
+        );
+
+        updateLightRecords();
+        bot.sendMessage(id, 'Тепер ви відслідковуєте адресу ' + ipAdress);
+      } else {
+        await LightRecords.create({
           status: true,
           lastTimestamp: new Date().toISOString(),
-          $push: { userIds: id },
-        }
-      );
+          userIds: [id],
+          ipToPing: ipAdress,
+        });
 
-      updateLightRecords();
-      bot.sendMessage(id, 'Тепер ви відслідковуєте адресу ' + ip);
+        updateLightRecords();
+        bot.sendMessage(id, 'Тепер ви відслідковуєте адресу ' + ipAdress);
+      }
     } else {
-      await LightRecords.create({
-        status: true,
-        lastTimestamp: new Date().toISOString(),
-        userIds: [id],
-        ipToPing: ip,
-      });
-
-      updateLightRecords();
-      bot.sendMessage(id, 'Тепер ви відслідковуєте адресу ' + ip);
+      bot.sendMessage(id, '192.168.x.x можна відслідковувати тільки з паролем');
     }
   } catch (err) {
     console.error('Failed to add user', err);

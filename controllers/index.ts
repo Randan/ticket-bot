@@ -4,6 +4,7 @@ import addUser from './addUser';
 import removeUser from './removeUser';
 import pingIP from './pingIP';
 import removeIPsWOUsers from './removeIPsWOUsers';
+import getIPsList from './getIPsList';
 
 export {
   help,
@@ -12,4 +13,5 @@ export {
   removeUser,
   pingIP,
   removeIPsWOUsers,
+  getIPsList,
 };
