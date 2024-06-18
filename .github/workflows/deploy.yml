@@ -15,7 +15,7 @@ jobs:
     - name: Install PM2
       run: npm install pm2 -g
 
-    - name: Deploy to VPS
+    - name: Deploy to RP5
       uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.HOST }}
@@ -23,7 +23,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          cd ~/projects/light-tg-bot
+          cd /home/randan/projects/light-tg-bot
           git pull origin master
           npm install
           pm2 restart light-tg-bot
