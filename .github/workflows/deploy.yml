@@ -20,10 +20,10 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          cd /${{ secrets.USERNAME }}/projects/light-tg-bot
+          cd ~/projects/light-tg-bot
           git pull origin master
           npm install
           pm2 restart light-tg-bot
