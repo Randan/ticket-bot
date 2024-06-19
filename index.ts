@@ -1,3 +1,5 @@
+process.env.NTBA_FIX_319 = '1';
+
 /* eslint-disable import/first */
 import express, { Express, Request, Response } from 'express';
 import mongoose from 'mongoose';
