@@ -8,12 +8,13 @@ const pingIP = (): void => {
   const lightRecords: ILightRecord[] = getValue(localDbName);
 
   Object.values(lightRecords).forEach((record: ILightRecord) => {
-    ping.sys.probe(record.ipToPing, (isAlive) => {
+    ping.sys.probe(record.ipToPing, isAlive => {
       if (record.status === isAlive) {
         return;
       }
 
       record.status = Boolean(isAlive);
+      record.lastTimestamp = new Date().toISOString();
 
       onLightStatusChange(record);
     });
