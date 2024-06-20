@@ -13,12 +13,13 @@ const onLightStatusChange = async (record: ILightRecord): Promise<void> => {
   const timeFormatted = formatTime(delta);
 
   const message = status
-    ? 'Світло увімкнене.\n' + ipToPing + '\nСвітла не було ' + timeFormatted
-    : 'Світло вимкнене.\n' + ipToPing + '\nСвітло було ' + timeFormatted;
+    ? '🟢 Світло увімкнене.\n' + ipToPing + '\nСвітла не було ' + timeFormatted
+    : '🔴 Світло вимкнене.\n' + ipToPing + '\nСвітло було ' + timeFormatted;
 
   userIds.forEach((id: number) => bot.sendMessage(id, message));
 
   try {
+    console.log({ status, lastTimestamp });
     await LightRecords.updateOne({ ipToPing }, { status, lastTimestamp });
   } catch {
     console.error('Failed to update light status');

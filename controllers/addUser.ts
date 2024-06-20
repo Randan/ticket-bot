@@ -52,7 +52,7 @@ const addUser = async (id: number, ip?: string): Promise<void> => {
           },
           {
             status: true,
-            lastTimestamp: new Date().toISOString(),
+            lastTimestamp: new Date(),
             $push: { userIds: id },
           }
         );
@@ -62,7 +62,7 @@ const addUser = async (id: number, ip?: string): Promise<void> => {
       } else {
         await LightRecords.create({
           status: true,
-          lastTimestamp: new Date().toISOString(),
+          lastTimestamp: new Date(),
           userIds: [id],
           ipToPing: ipAdress,
         });
