@@ -31,8 +31,7 @@ const onLightStatusChange = async (record: ILightRecord): Promise<void> => {
   userIds.forEach((id: number) => bot.sendMessage(id, message));
 
   try {
-    console.log({ status, lastTimestamp });
-    await LightRecords.updateOne({ ipToPing }, { status, lastTimestamp });
+    await LightRecords.updateOne({ ipToPing }, { status, lastTimestamp: new Date().toISOString() });
 
     updateLightRecords();
   } catch {

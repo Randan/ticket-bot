@@ -14,7 +14,6 @@ const pingIP = (): void => {
       }
 
       record.status = Boolean(isAlive);
-      record.lastTimestamp = new Date().toISOString();
 
       onLightStatusChange(record);
     });
