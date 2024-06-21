@@ -5,8 +5,6 @@ import { localDbName } from '../utils';
 
 const updateLightRecords = async (): Promise<void> => {
   try {
-    setValue(localDbName, []);
-
     const response: ILightRecord[] = await LightRecords.find({
       userIds: { $not: { $size: 0 } },
     });

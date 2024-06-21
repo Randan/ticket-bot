@@ -22,8 +22,6 @@ app.listen(appPort, async () => {
   console.log(`⚡⚡⚡ Light Bot is Alive on PORT: ${appPort}`);
 
   try {
-    setValue(localDbName, []);
-
     const response: ILightRecord[] = await LightRecords.find({
       userIds: { $not: { $size: 0 } },
     });
