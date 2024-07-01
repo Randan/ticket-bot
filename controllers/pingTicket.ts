@@ -5,35 +5,35 @@ import stopPingTicket from './stopPingTicket';
 
 const pingTicket = async (): Promise<void> => {
   try {
-    const response = await fetch(process.env.HSC_SITE + '/site/freetimes', {
-      headers: {
-        accept: '*/*',
-        'accept-language': 'en-US,en;q=0.9,uk-UA;q=0.8,uk;q=0.7',
-        'cache-control': 'no-cache',
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        pragma: 'no-cache',
-        'sec-ch-ua':
-          '"Not/A)Brand";v="8", "Chromium";v="126", "Google Chrome";v="126"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"macOS"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-        'x-csrf-token': process.env.SCRF_TOKEN ?? '',
-        'x-requested-with': 'XMLHttpRequest',
-        cookie: process.env.COOKIE ?? '',
-        Referer:
-          process.env.HSC_SITE + '/site/step2?chdate=' + process.env.WANTED_TICKET_DATE + '&question_id=' +
-          process.env.QUESTION_ID +
-          '&id_es=',
-        'Referrer-Policy': 'strict-origin-when-cross-origin',
-      },
-      body:
-        'office_id=' + process.env.OFFICE_ID + '&date_of_admission=' + process.env.WANTED_TICKET_DATE + '&question_id=' +
-        process.env.QUESTION_ID +
-        '&es_date=&es_time=',
-      method: 'POST',
-    });
+    const myHeaders = new Headers();
+
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+    myHeaders.append("Accept", "*/*");
+    myHeaders.append("Sec-Fetch-Site", "same-origin");
+    myHeaders.append("Accept-Language", "uk-UA,uk;q=0.9");
+    myHeaders.append("Accept-Encoding", "gzip, deflate, br");
+    myHeaders.append("Sec-Fetch-Mode", "cors");
+    myHeaders.append("Host", process.env.HSC_DOMAIN ?? '');
+    myHeaders.append("Origin",  process.env.HSC_SITE ?? '');
+    myHeaders.append("Content-Length", "75");
+    myHeaders.append("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15");
+    myHeaders.append("Referer", process.env.HSC_SITE + "/site/step2?chdate=" + process.env.WANTED_TICKET_DATE + "&question_id=" + process.env.QUESTION_ID + "&id_es=");
+    myHeaders.append("Connection", "keep-alive");
+    myHeaders.append("Sec-Fetch-Dest", "empty");
+    myHeaders.append("Cookie", process.env.COOKIE ?? '');
+    myHeaders.append("X-Requested-With", "XMLHttpRequest");
+    myHeaders.append("X-CSRF-Token", process.env.SCRF_TOKEN ?? '');
+
+    const raw = "office_id=" + process.env.OFFICE_ID + "&date_of_admission=" + process.env.WANTED_TICKET_DATE + "&question_id=" + process.env.QUESTION_ID + "&es_date=&es_time=";
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      // redirect: "follow"
+    };
+
+    const response = await fetch("https://eq.hsc.gov.ua/site/freetimes", requestOptions);
 
     const data: IFreeTicket = await response.json();
 
