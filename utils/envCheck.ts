@@ -35,6 +35,9 @@ const envCheck = (callBack?: () => void): void => {
   if (!process.env.HSC_SITE) {
     throw new Error('HSC_SITE is not defined');
   }
+  if (!process.env.SCRF_TOKEN) {
+    throw new Error('SCRF_TOKEN is not defined');
+  }
 
   callBack && callBack();
 };

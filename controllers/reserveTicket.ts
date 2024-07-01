@@ -17,8 +17,7 @@ const reserveTicket = async (id_chtime: number): Promise<void> => {
         'sec-fetch-dest': 'empty',
         'sec-fetch-mode': 'cors',
         'sec-fetch-site': 'same-origin',
-        'x-csrf-token':
-          'NAyR-MPZofzUAEXQ_Em5DZ7EPQLMxVtkw4cM2HdnRmlNZ9SLt5_2tb9QKraZIchG075aRKCtMye7tGqoIQ1yOQ==',
+        'x-csrf-token': process.env.SCRF_TOKEN ?? '',
         'x-requested-with': 'XMLHttpRequest',
         cookie: process.env.COOKIE ?? '',
         Referer:

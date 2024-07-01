@@ -19,8 +19,7 @@ const pingTicket = async (): Promise<void> => {
         'sec-fetch-dest': 'empty',
         'sec-fetch-mode': 'cors',
         'sec-fetch-site': 'same-origin',
-        'x-csrf-token':
-          '8Q2_isesgGLEfDkEVuuOcFacnFYYBO9Tx3oHByCPEt6IZvr5s-rXK68sVmIzg_87G-b7EHRshxC_SWF3duUmjg==',
+        'x-csrf-token': process.env.SCRF_TOKEN ?? '',
         'x-requested-with': 'XMLHttpRequest',
         cookie: process.env.COOKIE ?? '',
         Referer:
