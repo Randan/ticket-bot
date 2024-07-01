@@ -1,35 +1,19 @@
-process.env.NTBA_FIX_319 = '1';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 /* eslint-disable import/first */
 import express, { Express, Request, Response } from 'express';
-import mongoose from 'mongoose';
-import { setValue } from 'node-global-storage';
-import { appPort, dbMongooseUri, localDbName } from './utils';
-import { ILightRecord } from './interfaces';
-import { LightRecords } from './schemas';
+import ticketCron from './cron/ticketCron';
+import envCheck from './utils/envCheck';
 
 const app: Express = express();
 
-mongoose.connect(dbMongooseUri);
-
 app.get('/', (req: Request, res: Response): void => {
-  res.status(200).send('Light Bot is Alive');
+  res.status(200).send('Ticket Bot is Alive');
 });
 
-import './events';
+app.listen(process.env.PORT, async () => {
+  console.log(`⚡⚡⚡ Ticket Bot is Alive on PORT: ${process.env.PORT}`);
 
-app.listen(appPort, async () => {
-  console.log(`⚡⚡⚡ Light Bot is Alive on PORT: ${appPort}`);
-
-  try {
-    const response: ILightRecord[] = await LightRecords.find({
-      userIds: { $not: { $size: 0 } },
-    });
-
-    setValue(localDbName, response);
-  } catch (err) {
-    console.error('Failed to update light records', err);
-  }
+  envCheck(() => ticketCron.start());
 });
 
-import './cron';

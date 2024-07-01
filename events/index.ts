@@ -1,29 +1,22 @@
 import { Message } from 'node-telegram-bot-api';
 import bot from '../bot';
-import { addUser, getIPsList, help, removeUser } from '../controllers';
+
+import stopPingTicket from '../controllers/stopPingTicket';
+import startPingTicket from '../controllers/startPingTicket';
 
 const events: Record<string, RegExp> = {
-  help: /\/help/,
-  add: /\/add/,
-  remove: /\/remove/,
-  list: /\/list/,
+  start: /\/start/,
+  stop: /\/stop/,
 };
 
-bot.onText(events.help, (msg: Message): void => help(msg));
-
 bot.onText(
-  events.add,
+  events.start,
   async (msg: Message): Promise<void> =>
-    addUser(msg.from?.id || 0, msg.text?.split(' ')[1] || '')
+    startPingTicket()
 );
 
 bot.onText(
-  events.remove,
+  events.stop,
   async (msg: Message): Promise<void> =>
-    removeUser(msg.from?.id || 0, msg.text?.split(' ')[1])
-);
-
-bot.onText(
-  events.list,
-  async (msg: Message): Promise<void> => getIPsList(msg.from?.id || 0)
+    stopPingTicket()
 );
