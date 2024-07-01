@@ -38,6 +38,8 @@ const pingTicket = async (): Promise<void> => {
 
     const data: IFreeTicket = await response.json();
 
+    console.log(data);
+
     if (data.rows.length) {
       stopPingTicket();
 
